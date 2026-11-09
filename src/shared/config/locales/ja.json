@@ -190,5 +190,20 @@
         "uz": "ウズベク語"
       }
     }
+  },
+  "sessions": {
+    "finish": {
+      "title": "精算結果",
+      "totalAmount": "合計金額",
+      "byParticipant": "参加者ごとの金額：",
+      "byItem": "品目ごとの金額：",
+      "complete": "精算を完了する",
+      "share": "結果を共有する",
+      "copied": "コピーしました",
+      "shareHeader": "🧾 {{name}} の精算結果",
+      "shareHeaderNoName": "🧾 精算結果",
+      "shareTotal": "合計：{{amount}}",
+      "shareFooter": "Receipt Splitter で計算しました"
+    }
   }
 }

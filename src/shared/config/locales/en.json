@@ -6,7 +6,7 @@
   "features": {
     "scan": "Scan",
     "scanDesc": "Take photos of your receipts",
-    "split": "Split Bills", 
+    "split": "Split Bills",
     "splitDesc": "Divide costs with friends",
     "calculate": "Calculate",
     "calculateDesc": "Know who owes what"
@@ -189,6 +189,21 @@
         "ja": "Japanese",
         "uz": "Uzbek"
       }
+    }
+  },
+  "sessions": {
+    "finish": {
+      "title": "Bill Summary",
+      "totalAmount": "Total Amount",
+      "byParticipant": "Split by participant:",
+      "byItem": "Split by item:",
+      "complete": "Complete settlement",
+      "share": "Share result",
+      "copied": "Copied to clipboard",
+      "shareHeader": "🧾 {{name}} — bill summary",
+      "shareHeaderNoName": "🧾 Bill summary",
+      "shareTotal": "Total: {{amount}}",
+      "shareFooter": "Calculated with Receipt Splitter"
     }
   }
 }

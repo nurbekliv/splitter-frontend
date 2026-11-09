@@ -177,5 +177,20 @@
         "uz": "O'zbek tili"
       }
     }
+  },
+  "sessions": {
+    "finish": {
+      "title": "Hisob natijasi",
+      "totalAmount": "Umumiy summa",
+      "byParticipant": "Ishtirokchilar bo'yicha:",
+      "byItem": "Mahsulotlar bo'yicha:",
+      "complete": "Hisob-kitobni yakunlash",
+      "share": "Natijani ulashish",
+      "copied": "Nusxalandi",
+      "shareHeader": "🧾 {{name}} — hisob natijasi",
+      "shareHeaderNoName": "🧾 Hisob natijasi",
+      "shareTotal": "Jami: {{amount}}",
+      "shareFooter": "Receipt Splitter bilan hisoblandi"
+    }
   }
 }

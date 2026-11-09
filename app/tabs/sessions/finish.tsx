@@ -1,10 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { Platform, Share } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { YStack, XStack, Text, Button, Circle, ScrollView } from 'tamagui';
-import { Check } from '@tamagui/lucide-icons';
+import { Check, Share2 } from '@tamagui/lucide-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { FinalizeTotalsByItem, FinalizeTotalsByParticipant, ReceiptAllocation } from '@/features/receipt/api/receipt.api';
 import { useReceiptSessionStore, type FinishPayload } from '@/features/receipt/model/receipt-session.store';
+import { buildShareSummary } from '@/features/receipt/lib/share-summary';
 
 type Participant = { uniqueId: string; username: string };
 
@@ -37,6 +41,8 @@ export default function FinishScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const lastFinishPayload = useReceiptSessionStore((s) => s.lastFinishPayload);
+  const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
 
   const payload = useMemo<FinishPayload | null>(() => {
     if (data) {
@@ -409,6 +415,36 @@ export default function FinishScreen() {
   }, [participants, totals, totalsByParticipantList, totalsByItemList, allocationsList, knownGrandTotal]);
 
   const showGrandTotal = participantSummaries.length > 0 || itemSummaries.length > 0;
+
+  // Share the result as text (LINE, Telegram, ...). Browsers without the
+  // Web Share API fall back to copying the text to the clipboard.
+  const handleShare = async () => {
+    const message = buildShareSummary({
+      t,
+      sessionName,
+      currency,
+      grandTotal: effectiveGrandTotal,
+      lines: participantSummaries.map(({ username, amount }) => ({ username, amount })),
+    });
+
+    const canUseShareSheet =
+      Platform.OS !== 'web' ||
+      (typeof navigator !== 'undefined' && typeof navigator.share === 'function');
+
+    if (canUseShareSheet) {
+      try {
+        await Share.share({ message, title: t('sessions.finish.title') });
+        return;
+      } catch (error) {
+        // The user closed the share sheet: nothing else to do.
+        if (error instanceof Error && error.name === 'AbortError') return;
+      }
+    }
+
+    await Clipboard.setStringAsync(message);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
   const grandTotalParts = showGrandTotal ? getCurrencyParts(effectiveGrandTotal, currency) : null;
 
   const Avatar = ({ name }: { name: string }) => (
@@ -426,7 +462,7 @@ export default function FinishScreen() {
         <XStack w="100%" ai="center" jc="flex-start" mb="$3">
           <YStack ai="flex-start">
             <Text fontSize={16} fontWeight="700">
-              Bill Summary
+              {t('sessions.finish.title')}
             </Text>
             {receiptId && (
               <Text fontSize={12} color="$gray10">
@@ -475,7 +511,7 @@ export default function FinishScreen() {
             mb="$3"
           >
             <Text fontSize={13} color="$gray11" mb="$1">
-              Total Amount
+              {t('sessions.finish.totalAmount')}
             </Text>
             <XStack ai="baseline" gap="$1">
               <Text fontSize={14} color="#2ECC71">
@@ -493,11 +529,11 @@ export default function FinishScreen() {
       <ScrollView
         f={1}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: (insets?.bottom ?? 0) + 96 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: (insets?.bottom ?? 0) + 150 }}
       >
         <YStack gap="$2">
           <Text fontSize={14} fontWeight="600" color="$gray11" mb="$1">
-            Split by participant:
+            {t('sessions.finish.byParticipant')}
           </Text>
           {participantSummaries.length > 0 ? (
             participantSummaries.map((summary) => {
@@ -543,7 +579,7 @@ export default function FinishScreen() {
         {itemSummaries.length > 0 && (
           <YStack gap="$2" mt="$4">
             <Text fontSize={14} fontWeight="600" color="$gray11" mb="$1">
-              Split by item:
+              {t('sessions.finish.byItem')}
             </Text>
             {itemSummaries.map((item) => {
               const itemParts = getCurrencyParts(item.total, currency);
@@ -614,7 +650,29 @@ export default function FinishScreen() {
         right={0}
         bottom={(insets?.bottom ?? 0) + 8}
         px="$4"
+        gap="$2"
       >
+        {participantSummaries.length > 0 && (
+          <Button
+            unstyled
+            height={41}
+            borderRadius={10}
+            borderWidth={1}
+            borderColor="#2ECC71"
+            bg="$background"
+            ai="center"
+            jc="center"
+            onPress={handleShare}
+            pressStyle={{ opacity: 0.8 }}
+          >
+            <XStack ai="center" gap="$2">
+              <Share2 size={18} color="#2ECC71" />
+              <Text fontSize={16} fontWeight="600" color="#2ECC71">
+                {copied ? t('sessions.finish.copied') : t('sessions.finish.share')}
+              </Text>
+            </XStack>
+          </Button>
+        )}
         <Button
           unstyled
           height={41}
@@ -626,7 +684,7 @@ export default function FinishScreen() {
           pressStyle={{ opacity: 0.9 }}
         >
           <Text fontSize={16} fontWeight="600" color="white">
-            Complete settlement
+            {t('sessions.finish.complete')}
           </Text>
         </Button>
       </YStack>
