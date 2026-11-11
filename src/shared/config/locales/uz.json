@@ -209,5 +209,46 @@
       "copyFailed": "Nusxalab bo'lmadi — yuqoridagi matnni belgilang",
       "otherApps": "Boshqa ilovalar"
     }
+  },
+  "flow": {
+    "scan": {
+      "back": "Orqaga",
+      "title": "Chekni skanerlash",
+      "allowCamera": "Kameraga ruxsat bering",
+      "uploading": "Chek yuborilmoqda...",
+      "sessionName": "Sessiya nomi",
+      "sessionPlaceholder": "Masalan: Oktyabrdagi kafe",
+      "language": "til",
+      "cancel": "Bekor qilish",
+      "processing": "Ishlanmoqda...",
+      "sample": "Namuna chek bilan sinash"
+    },
+    "participants": {
+      "search": "Qidirish…",
+      "next": "Keyingi",
+      "selected": "Tanlangan",
+      "select": "Tanlash"
+    },
+    "split": {
+      "orders": "Buyurtmalar",
+      "participants": "Ishtirokchilar ({{count}})",
+      "assignedCount": "{{done}}/{{total}} taqsimlandi",
+      "assignRemaining": "Yana {{count}} donani taqsimlang",
+      "change": "O'zgartirish",
+      "who": "Kimniki?",
+      "progress": "Taqsimlash holati",
+      "continue": "Davom etish",
+      "saving": "Saqlanmoqda...",
+      "equalSplit": "Teng bo'lish",
+      "byUnits": "Dona bo'yicha",
+      "assignTo": "Kimga:",
+      "all": "Hammasi",
+      "clear": "Tozalash",
+      "unitsAssigned": "dona taqsimlandi",
+      "cancel": "Bekor qilish",
+      "save": "Saqlash",
+      "savingSplit": "Saqlanmoqda...",
+      "billConfirmed": "Hisob tasdiqlandi"
+    }
   }
 }

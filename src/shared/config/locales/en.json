@@ -220,5 +220,46 @@
       "copyFailed": "Could not copy — select the text above",
       "otherApps": "Other apps"
     }
+  },
+  "flow": {
+    "scan": {
+      "back": "Back",
+      "title": "Scan receipt",
+      "allowCamera": "Allow camera access",
+      "uploading": "Uploading receipt...",
+      "sessionName": "Session name",
+      "sessionPlaceholder": "e.g. Cafe on October",
+      "language": "language",
+      "cancel": "Cancel",
+      "processing": "Processing...",
+      "sample": "Try with a sample receipt"
+    },
+    "participants": {
+      "search": "Search…",
+      "next": "Next",
+      "selected": "Selected",
+      "select": "Select"
+    },
+    "split": {
+      "orders": "Orders",
+      "participants": "Participants ({{count}})",
+      "assignedCount": "{{done}}/{{total}} assigned",
+      "assignRemaining": "Assign the remaining {{count}} unit(s)",
+      "change": "Change",
+      "who": "Who?",
+      "progress": "Assignment progress",
+      "continue": "Continue",
+      "saving": "Saving...",
+      "equalSplit": "Equal split",
+      "byUnits": "By units",
+      "assignTo": "Assign to:",
+      "all": "All",
+      "clear": "Clear",
+      "unitsAssigned": "unit(s) assigned",
+      "cancel": "Cancel",
+      "save": "Save",
+      "savingSplit": "Saving split...",
+      "billConfirmed": "Bill confirmed"
+    }
   }
 }

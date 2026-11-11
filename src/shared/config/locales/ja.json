@@ -220,5 +220,46 @@
       "copyFailed": "コピーできませんでした。上の文章を選択してください",
       "otherApps": "ほかのアプリで共有"
     }
+  },
+  "flow": {
+    "scan": {
+      "back": "戻る",
+      "title": "レシートをスキャン",
+      "allowCamera": "カメラへのアクセスを許可してください",
+      "uploading": "レシートを送信中...",
+      "sessionName": "セッション名",
+      "sessionPlaceholder": "例：渋谷の居酒屋",
+      "language": "言語",
+      "cancel": "キャンセル",
+      "processing": "処理中...",
+      "sample": "サンプルのレシートで試す"
+    },
+    "participants": {
+      "search": "検索…",
+      "next": "次へ",
+      "selected": "選択中",
+      "select": "選択"
+    },
+    "split": {
+      "orders": "注文",
+      "participants": "参加者（{{count}}人）",
+      "assignedCount": "{{done}}/{{total}} 割り当て済み",
+      "assignRemaining": "残り{{count}}個を割り当ててください",
+      "change": "変更",
+      "who": "だれの？",
+      "progress": "割り当ての進み具合",
+      "continue": "次へ",
+      "saving": "保存中...",
+      "equalSplit": "均等に分ける",
+      "byUnits": "個数で分ける",
+      "assignTo": "割り当て先：",
+      "all": "全員",
+      "clear": "クリア",
+      "unitsAssigned": "個 割り当て済み",
+      "cancel": "キャンセル",
+      "save": "保存",
+      "savingSplit": "保存しています...",
+      "billConfirmed": "精算が確定しました"
+    }
   }
 }

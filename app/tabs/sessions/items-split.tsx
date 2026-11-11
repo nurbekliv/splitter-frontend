@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -229,6 +230,7 @@ const parseParticipantsParam = (raw?: string): Participant[] => {
 };
 
 export default function ItemsSplitScreen() {
+  const { t } = useTranslation();
   const { participants: participantsParam, receiptId } = useLocalSearchParams<{
     participants?: string;
     receiptId?: string;
@@ -779,7 +781,7 @@ export default function ItemsSplitScreen() {
         <XStack w="100%" ai="center" jc="flex-start" mb="$3">
           <YStack ai="flex-start">
             <Text fontSize={16} fontWeight="700">
-              Orders
+              {t('flow.split.orders')}
             </Text>
             <Text fontSize={12} color="$gray10">
               {sessionReceiptId ?? (isMockSession ? 'mock-001' : 'N/A')}
@@ -800,7 +802,7 @@ export default function ItemsSplitScreen() {
             <XStack w="100%" ai="center" jc="flex-start" mb="$2">
               <XStack ai="center" gap="$2">
                 <UsersIcon size={18} color="$gray10" />
-                <Text fontWeight="700">Participants ({participants.length})</Text>
+                <Text fontWeight="700">{t('flow.split.participants', { count: participants.length })}</Text>
               </XStack>
             </XStack>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -850,7 +852,7 @@ export default function ItemsSplitScreen() {
 
               let summaryText = '';
               if (it.splitMode === 'count') {
-                summaryText = `${assignedUnits}/${it.quantity} assigned`;
+                summaryText = t('flow.split.assignedCount', { done: assignedUnits, total: it.quantity });
               } else if (singleOwner) {
                 summaryText = ownerName ?? '';
               } else if (it.quantity > 1) {
@@ -886,7 +888,7 @@ export default function ItemsSplitScreen() {
                       )}
                       {isCountAndMissing && (
                         <Text fontSize={12} color="#E74C3C">
-                          Assign remaining {missingUnits} unit{missingUnits === 1 ? '' : 's'}
+                          {t('flow.split.assignRemaining', { count: missingUnits })}
                         </Text>
                       )}
                     </YStack>
@@ -920,7 +922,7 @@ export default function ItemsSplitScreen() {
                           fontWeight="600"
                           color={assigned ? '#2ECC71' : '$gray11'}
                         >
-                          {assigned ? 'Change' : 'Who?'}
+                          {assigned ? t('flow.split.change') : t('flow.split.who')}
                         </Text>
                       </Button>
                     </YStack>
@@ -944,7 +946,7 @@ export default function ItemsSplitScreen() {
           <YStack p="$3" borderWidth={1} borderColor="$gray5" borderRadius={12} bg="$color1">
             <XStack w="100%" ai="center" jc="space-between" mb="$2">
               <Text color="$gray10" fontSize={13}>
-                Assignment progress
+                {t('flow.split.progress')}
               </Text>
               <Text fontSize={13} fontWeight="700">
                 {assignedCount}/{totalItems}
@@ -969,7 +971,7 @@ export default function ItemsSplitScreen() {
               opacity={finalizing ? 0.6 : 1}
             >
               <Text fontSize={16} fontWeight="600" color="white">
-                {finalizing ? 'Saving...' : 'Continue'}
+                {finalizing ? t('flow.split.saving') : t('flow.split.continue')}
               </Text>
             </Button>
             {submitError && (
@@ -1017,13 +1019,13 @@ export default function ItemsSplitScreen() {
             {editingItem && editingItem.quantity > 1 && (
               <XStack gap="$2" mb="$2">
                 <ModeToggleButton
-                  label="Equal split"
+                  label={t('flow.split.equalSplit')}
                   icon={<UsersIcon size={16} color={isEqualMode ? 'white' : '#2C3D4F'} />}
                   active={isEqualMode}
                   onPress={switchToEqual}
                 />
                 <ModeToggleButton
-                  label="By units"
+                  label={t('flow.split.byUnits')}
                   icon={<PackageIcon size={16} color={isCountMode ? 'white' : '#2C3D4F'} />}
                   active={isCountMode}
                   onPress={switchToCount}
@@ -1032,17 +1034,17 @@ export default function ItemsSplitScreen() {
             )}
 
             <XStack w="100%" ai="center" jc="space-between" mb="$2">
-              <Text fontWeight="600">Assign to:</Text>
+              <Text fontWeight="600">{t('flow.split.assignTo')}</Text>
               <XStack ai="center" gap="$2">
                 <Button chromeless onPress={modalAll}>
                   <Text color="#2ECC71" fontWeight="700">
-                    All
+                    {t('flow.split.all')}
                   </Text>
                 </Button>
                 <Text color="$gray8">|</Text>
                 <Button chromeless onPress={modalClear}>
                   <Text color="#E74C3C" fontWeight="700">
-                    Clear
+                    {t('flow.split.clear')}
                   </Text>
                 </Button>
               </XStack>
@@ -1156,7 +1158,7 @@ export default function ItemsSplitScreen() {
                 <YStack mt="$2" p={8} borderRadius={5} bg="#2ECC711A">
                   <Text fontSize={13} fontWeight="700" color="#2ECC71">
                     {Object.values(editing.perPersonCount).reduce((a, b) => a + (b || 0), 0)}{' '}
-                    unit(s) assigned
+                    {t('flow.split.unitsAssigned')}
                   </Text>
                   <Text fontSize={12} color="#2ECC71">
                     Per unit: {fmtCurrency(editingItem?.price || 0)}
@@ -1176,7 +1178,7 @@ export default function ItemsSplitScreen() {
                 ai="center"
                 jc="center"
               >
-                <Text>Cancel</Text>
+                <Text>{t('flow.split.cancel')}</Text>
               </Button>
               <Button
                 unstyled
@@ -1191,7 +1193,7 @@ export default function ItemsSplitScreen() {
                 pressStyle={{ opacity: 0.9 }}
               >
                 <Text color="white" fontWeight="600">
-                  Save
+                  {t('flow.split.save')}
                 </Text>
               </Button>
             </XStack>
@@ -1211,7 +1213,7 @@ export default function ItemsSplitScreen() {
           <YStack w={390} h={156} ai="center" jc="center" bg="$color1" br={12}>
             <Spinner size="large" color="#2ECC71" />
             <Text mt="$2" color="#2ECC71" fontSize={16} fontWeight="600">
-              Saving split...
+              {t('flow.split.savingSplit')}
             </Text>
           </YStack>
         </YStack>
@@ -1229,7 +1231,7 @@ export default function ItemsSplitScreen() {
           <YStack w={390} h={156} ai="center" jc="center" bg="#2ECC71" br={12}>
             <Check size={42} color="white" />
             <Text mt="$2" color="white" fontSize={18} fontWeight="700">
-              Bill confirmed
+              {t('flow.split.billConfirmed')}
             </Text>
           </YStack>
         </YStack>

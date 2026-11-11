@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -35,6 +36,7 @@ const SAMPLE_RECEIPT_IMAGE =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
 export default function ScanReceiptScreen() {
+  const { t } = useTranslation();
   const [perm, requestPerm] = useCameraPermissions();
   const isFocused = useIsFocused();
   const router = useRouter();
@@ -186,9 +188,9 @@ export default function ScanReceiptScreen() {
             icon={<ChevronLeft size={18} color="white" />}
             color="white"
           >
-            Back
+            {t('flow.scan.back')}
           </Button>
-          <Paragraph fow="700" fos="$6" col="white">Scan receipt</Paragraph>
+          <Paragraph fow="700" fos="$6" col="white">{t('flow.scan.title')}</Paragraph>
           <YStack w={54} />
         </XStack>
       </View>
@@ -202,14 +204,14 @@ export default function ScanReceiptScreen() {
           />
         ) : (
           <YStack f={1} ai="center" jc="center">
-            {!perm ? <ActivityIndicator color="white" /> : <Paragraph col="$gray1">Allow camera access</Paragraph>}
+            {!perm ? <ActivityIndicator color="white" /> : <Paragraph col="$gray1">{t('flow.scan.allowCamera')}</Paragraph>}
           </YStack>
         )}
 
         {parsing && (
           <View style={S.overlay}>
             <Spinner size="large" color="white" />
-            <Paragraph mt="$2" col="white">Uploading receipt...</Paragraph>
+            <Paragraph mt="$2" col="white">{t('flow.scan.uploading')}</Paragraph>
           </View>
         )}
       </View>
@@ -218,12 +220,12 @@ export default function ScanReceiptScreen() {
         <YStack gap="$3">
           <YStack gap={8}>
             <Paragraph color="$gray1" fontSize={12}>
-              Session name
+              {t('flow.scan.sessionName')}
             </Paragraph>
             <Input
               value={sessionName}
               onChangeText={handleSessionNameChange}
-              placeholder="e.g. Cafe on October"
+              placeholder={t('flow.scan.sessionPlaceholder')}
               height={41}
               borderRadius={10}
               px={16}
@@ -235,7 +237,7 @@ export default function ScanReceiptScreen() {
           </YStack>
 
           <Paragraph color="$gray1" fontSize={12}>
-            language: <Text fontWeight="700" color="white">{language}</Text>
+            {t('flow.scan.language')}: <Text fontWeight="700" color="white">{language}</Text>
           </Paragraph>
 
           {storedCapture?.uri && (
@@ -263,7 +265,7 @@ export default function ScanReceiptScreen() {
               disabled={parsing}
               opacity={parsing ? 0.6 : 1}
             >
-              Cancel
+              {t('flow.scan.cancel')}
             </Button>
             <Button
               size="$3"
@@ -273,12 +275,21 @@ export default function ScanReceiptScreen() {
               disabled={disableAction}
               icon={parsing ? undefined : <CameraIcon size={18} color="white" />}
             >
-              {parsing ? 'Processing...' : 'Scan receipt'}
+              {parsing ? t('flow.scan.processing') : t('flow.scan.title')}
             </Button>
           </XStack>
 
-          <Button size="$2" borderRadius="$3" theme="gray" variant="outlined" onPress={useMock} disabled={parsing}>
-            Try with a sample receipt
+          <Button
+            size="$3"
+            borderRadius="$3"
+            variant="outlined"
+            borderColor="rgba(255,255,255,0.7)"
+            color="white"
+            hoverStyle={{ backgroundColor: 'rgba(255,255,255,0.12)' }}
+            onPress={useMock}
+            disabled={parsing}
+          >
+            {t('flow.scan.sample')}
           </Button>
         </YStack>
       </View>

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   YStack, XStack, Button, Spinner, Text, Input, ScrollView
@@ -14,6 +15,7 @@ import { useReceiptSessionStore } from '@/features/receipt/model/receipt-session
 type LiteUser = { uniqueId: string; username: string; avatarUrl?: string | null };
 
 export default function SessionParticipantsScreen() {
+  const { t } = useTranslation();
   const { receiptId } = useLocalSearchParams<{ receiptId?: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -247,7 +249,7 @@ export default function SessionParticipantsScreen() {
       jc="center"
     >
       <Text fontSize={14} fontWeight="500" color={on ? '#FFFFFF' : '#2C3D4FCC'}>
-        {on ? 'Selected' : 'Select'}
+        {on ? t('flow.participants.selected') : t('flow.participants.select')}
       </Text>
     </Button>
   );
@@ -312,7 +314,7 @@ export default function SessionParticipantsScreen() {
 
       {/* Search */}
       <Input
-        placeholder="Search…"
+        placeholder={t('flow.participants.search')}
         value={q}
         onChangeText={setQ}
         h={41}
@@ -386,7 +388,7 @@ export default function SessionParticipantsScreen() {
           opacity={canNext ? 1 : 0.5}
         >
           <Text fontSize={16} fontWeight="500" color="#FFFFFF" style={{ lineHeight: 25 }}>
-            Next
+            {t('flow.participants.next')}
           </Text>
         </Button>
       </YStack>
