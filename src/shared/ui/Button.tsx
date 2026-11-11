@@ -31,6 +31,9 @@ export const Button: React.FC<CustomButtonProps> = ({
     const variantStyles = {
       primary: {
         backgroundColor: disabled ? '$gray8' : '#2ECC71',
+        hoverStyle: { backgroundColor: disabled ? '$gray8' : '#29B765' },
+        focusStyle: { backgroundColor: disabled ? '$gray8' : '#29B765' },
+        pressStyle: { backgroundColor: disabled ? '$gray8' : '#23A058', scale: 0.97 },
         color: '#FFFFFF',
       },
       secondary: {
@@ -41,6 +44,8 @@ export const Button: React.FC<CustomButtonProps> = ({
         backgroundColor: 'transparent',
         borderWidth: 1,
         borderColor: disabled ? '$gray8' : '$green10',
+        hoverStyle: { backgroundColor: '#2ECC7114', borderColor: '$green10' },
+        focusStyle: { backgroundColor: '#2ECC7114', borderColor: '$green10' },
         color: disabled ? '$gray8' : '$green10',
       }
     }

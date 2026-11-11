@@ -1,31 +1,36 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useRouter, Link } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { YStack, XStack, Text } from 'tamagui';
 import { useTranslation } from 'react-i18next';
-import { Alert } from 'react-native';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Card } from '@/shared/ui/Card';
 import ScreenFormContainer from '@/shared/ui/ScreenFormContainer';
 import PasswordInput from '@/shared/ui/PasswordInput';
+import FormError from '@/shared/ui/FormError';
+import PasswordRules from './PasswordRules';
+import { isStrongPassword } from '../model/password-policy';
 import { register as registerUser, RegisterRequest, getCurrentUser } from '../api';
 import { saveToken } from '@/shared/lib/utils/token-storage';
 import { useAppStore } from '@/shared/lib/stores/app-store';
 import { User, Mail, Lock } from '@tamagui/lucide-icons';
 
-const schema = z.object({
-  username: z.string().min(2, 'Username must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
-
-type FormData = z.infer<typeof schema>;
+type FormData = { username: string; email: string; password: string };
 
 export default function RegisterForm() {
   const { t } = useTranslation();
+  const schema = useMemo(
+    () =>
+      z.object({
+        username: z.string().min(2, t('auth.usernameMin')),
+        email: z.string().email(t('auth.emailInvalid')),
+        password: z.string().refine(isStrongPassword, t('auth.passwordWeak')),
+      }),
+    [t]
+  );
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { username: '', email: '', password: '' },
@@ -33,10 +38,12 @@ export default function RegisterForm() {
   const setAuth = useAppStore((s) => s.setAuth);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState<string>();
 
   const onSubmit = async (values: RegisterRequest) => {
     try {
       setIsLoading(true);
+      setServerError(undefined);
       const res = await registerUser(values);
       await saveToken(res.token);
 
@@ -50,10 +57,7 @@ export default function RegisterForm() {
       setAuth(res.token, profile);
       router.replace('/');
     } catch (error: any) {
-      Alert.alert(
-        t('common.error', 'Error'),
-        error.message || t('auth.registerError', 'An error occurred during registration')
-      );
+      setServerError(error?.message || t('auth.registerError'));
     } finally {
       setIsLoading(false);
     }
@@ -165,10 +169,13 @@ export default function RegisterForm() {
                       error={errors.password?.message}
                       required
                     />
+                    <PasswordRules value={value} />
                   </YStack>
                 </XStack>
               )}
             />
+
+            <FormError message={serverError} />
 
             {/* Submit */}
             <Button

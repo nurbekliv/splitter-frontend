@@ -33,7 +33,17 @@
     "noAccount": "アカウントをお持ちでないですか？",
     "haveAccount": "すでにアカウントをお持ちですか？",
     "loginError": "ログイン中にエラーが発生しました",
-    "registerError": "登録中にエラーが発生しました"
+    "registerError": "登録中にエラーが発生しました",
+    "usernameMin": "ユーザー名は2文字以上で入力してください",
+    "emailInvalid": "正しいメールアドレスを入力してください",
+    "passwordWeak": "パスワードが条件を満たしていません",
+    "passwordRules": {
+      "length": "8文字以上",
+      "upper": "大文字（A-Z）を含む",
+      "lower": "小文字（a-z）を含む",
+      "digit": "数字（0-9）を含む",
+      "special": "記号（!@#など）を含む"
+    }
   },
   "common": {
     "welcome": "ようこそ",

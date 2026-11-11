@@ -5,12 +5,12 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { YStack, XStack, Text } from 'tamagui';
 import { useTranslation } from 'react-i18next';
-import { Alert } from 'react-native';
 import { Button } from '@/shared/ui/Button';
 import { Input } from '@/shared/ui/Input';
 import { Card } from '@/shared/ui/Card';
 import ScreenFormContainer from '@/shared/ui/ScreenFormContainer';
 import PasswordInput from '@/shared/ui/PasswordInput';
+import FormError from '@/shared/ui/FormError';
 import { login, LoginRequest, getCurrentUser } from '../api';
 import { saveToken } from '@/shared/lib/utils/token-storage';
 import { useAppStore } from '@/shared/lib/stores/app-store';
@@ -32,10 +32,12 @@ export default function LoginForm() {
   const setAuth = useAppStore((s) => s.setAuth);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState<string>();
 
   const onSubmit = async (values: LoginRequest) => {
     try {
       setIsLoading(true);
+      setServerError(undefined);
       const res = await login(values);
       await saveToken(res.token);
 
@@ -49,10 +51,7 @@ export default function LoginForm() {
       setAuth(res.token, profile);
       router.replace('/');
     } catch (error: any) {
-      Alert.alert(
-        t('common.error', 'Error'),
-        error.message || t('auth.loginError', 'An error occurred during login')
-      );
+      setServerError(error?.message || t('auth.loginError'));
     } finally {
       setIsLoading(false);
     }
@@ -144,6 +143,8 @@ export default function LoginForm() {
                 {t('auth.forgotPassword', 'Forgot Password?')}
               </Text>
             </XStack>
+
+            <FormError message={serverError} />
 
             {/* Submit */}
             <Button

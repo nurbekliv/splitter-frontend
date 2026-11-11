@@ -31,7 +31,19 @@
     "usernamePlaceholder": "Foydalanuvchi nomini kiriting",
     "forgotPassword": "Parolni unutdingizmi?",
     "noAccount": "Hisobingiz yo'qmi?",
-    "haveAccount": "Hisobingiz bormi?"
+    "haveAccount": "Hisobingiz bormi?",
+    "usernameMin": "Foydalanuvchi nomi kamida 2 ta belgi bo'lsin",
+    "emailInvalid": "To'g'ri email kiriting",
+    "passwordWeak": "Parol talablarga javob bermaydi",
+    "loginError": "Kirishda xatolik yuz berdi",
+    "registerError": "Ro'yxatdan o'tishda xatolik yuz berdi",
+    "passwordRules": {
+      "length": "Kamida 8 ta belgi",
+      "upper": "Katta harf (A-Z)",
+      "lower": "Kichik harf (a-z)",
+      "digit": "Raqam (0-9)",
+      "special": "Belgi (!@# va h.k.)"
+    }
   },
   "common": {
     "welcome": "Xush kelibsiz",
