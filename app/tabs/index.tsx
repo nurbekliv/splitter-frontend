@@ -205,7 +205,7 @@ export default function HomePage() {
             </Circle>
           </Pressable>
           <Text mt="$2" color="$gray10" fontSize={13}>
-            {t('home.scan.cta', 'Scan invite')}
+            {t('home.scan.cta', 'Scan receipt')}
           </Text>
         </YStack>
 

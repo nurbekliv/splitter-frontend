@@ -72,7 +72,7 @@
       "friendFallback": "友だち"
     },
     "scan": {
-      "cta": "招待をスキャンする"
+      "cta": "レシートをスキャン"
     },
     "actions": {
       "friends": "友だち",
@@ -213,7 +213,12 @@
       "shareHeader": "🧾 {{name}} の精算結果",
       "shareHeaderNoName": "🧾 精算結果",
       "shareTotal": "合計：{{amount}}",
-      "shareFooter": "Receipt Splitter で計算しました"
+      "shareFooter": "Receipt Splitter で計算しました",
+      "sharePreview": "共有する内容",
+      "sendLine": "LINEで送る",
+      "copy": "テキストをコピー",
+      "copyFailed": "コピーできませんでした。上の文章を選択してください",
+      "otherApps": "ほかのアプリで共有"
     }
   }
 }

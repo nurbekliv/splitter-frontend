@@ -72,7 +72,7 @@
       "friendFallback": "friend"
     },
     "scan": {
-      "cta": "Scan invite"
+      "cta": "Scan receipt"
     },
     "actions": {
       "friends": "Friends",
@@ -213,7 +213,12 @@
       "shareHeader": "🧾 {{name}} — bill summary",
       "shareHeaderNoName": "🧾 Bill summary",
       "shareTotal": "Total: {{amount}}",
-      "shareFooter": "Calculated with Receipt Splitter"
+      "shareFooter": "Calculated with Receipt Splitter",
+      "sharePreview": "Message to share",
+      "sendLine": "Send via LINE",
+      "copy": "Copy text",
+      "copyFailed": "Could not copy — select the text above",
+      "otherApps": "Other apps"
     }
   }
 }

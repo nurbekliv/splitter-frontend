@@ -30,6 +30,10 @@ function guessMime(uri?: string): string {
   return 'image/jpeg';
 }
 
+// 1x1 PNG used by the sample-receipt button (see useMock below).
+const SAMPLE_RECEIPT_IMAGE =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
 export default function ScanReceiptScreen() {
   const [perm, requestPerm] = useCameraPermissions();
   const isFocused = useIsFocused();
@@ -136,12 +140,27 @@ export default function ScanReceiptScreen() {
     }
   }, [cameraRef, parsing, sessionName, setSessionNameStore, setCapture, parseReceipt, language, router]);
 
-  const useMock = useCallback(() => {
-    router.push({
-      pathname: '/tabs/sessions/participants',
-      params: { receiptId: 'mock-001' },
-    } as never);
-  }, [router]);
+  // Sample receipt: send a tiny placeholder image through the normal scan API.
+  // Without GEMINI_API_KEY the backend answers with sample items, so a real
+  // session is created and the whole flow (split -> finish -> share) works
+  // even on a computer without a camera.
+  const useMock = useCallback(async () => {
+    if (parsing) return;
+    setLocalError(null);
+    try {
+      const preparedName = sessionName.trim() || getDefaultSessionName();
+      setSessionNameStore(preparedName);
+      await parseReceipt({
+        sessionName: preparedName,
+        language,
+        image: { data: SAMPLE_RECEIPT_IMAGE, mimeType: 'image/png' },
+      });
+      router.push('/tabs/sessions/participants');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to load the sample receipt';
+      setLocalError(message);
+    }
+  }, [parsing, sessionName, setSessionNameStore, parseReceipt, language, router]);
 
   const goBack = useCallback(() => {
     router.back();
@@ -259,7 +278,7 @@ export default function ScanReceiptScreen() {
           </XStack>
 
           <Button size="$2" borderRadius="$3" theme="gray" variant="outlined" onPress={useMock} disabled={parsing}>
-            Use mock receipt
+            Try with a sample receipt
           </Button>
         </YStack>
       </View>

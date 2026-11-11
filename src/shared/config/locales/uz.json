@@ -61,7 +61,7 @@
       "friendFallback": "do'stim"
     },
     "scan": {
-      "cta": "Taklifni skanerlang"
+      "cta": "Chekni skanerlash"
     },
     "actions": {
       "friends": "Do'stlar",
@@ -202,7 +202,12 @@
       "shareHeader": "🧾 {{name}} — hisob natijasi",
       "shareHeaderNoName": "🧾 Hisob natijasi",
       "shareTotal": "Jami: {{amount}}",
-      "shareFooter": "Receipt Splitter bilan hisoblandi"
+      "shareFooter": "Receipt Splitter bilan hisoblandi",
+      "sharePreview": "Ulashiladigan matn",
+      "sendLine": "LINE orqali yuborish",
+      "copy": "Matnni nusxalash",
+      "copyFailed": "Nusxalab bo'lmadi — yuqoridagi matnni belgilang",
+      "otherApps": "Boshqa ilovalar"
     }
   }
 }

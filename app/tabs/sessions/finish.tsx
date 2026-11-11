@@ -1,14 +1,14 @@
 import React, { useMemo, useState } from 'react';
-import { Platform, Share } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
+import { Linking, Modal, Platform, Share } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { YStack, XStack, Text, Button, Circle, ScrollView } from 'tamagui';
-import { Check, Share2 } from '@tamagui/lucide-icons';
+import { Check, Copy, MessageCircle, Share2, X } from '@tamagui/lucide-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { FinalizeTotalsByItem, FinalizeTotalsByParticipant, ReceiptAllocation } from '@/features/receipt/api/receipt.api';
 import { useReceiptSessionStore, type FinishPayload } from '@/features/receipt/model/receipt-session.store';
 import { buildShareSummary } from '@/features/receipt/lib/share-summary';
+import { copyText } from '@/shared/lib/utils/copy-text';
 
 type Participant = { uniqueId: string; username: string };
 
@@ -42,7 +42,8 @@ export default function FinishScreen() {
   const insets = useSafeAreaInsets();
   const lastFinishPayload = useReceiptSessionStore((s) => s.lastFinishPayload);
   const { t } = useTranslation();
-  const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
 
   const payload = useMemo<FinishPayload | null>(() => {
     if (data) {
@@ -416,34 +417,40 @@ export default function FinishScreen() {
 
   const showGrandTotal = participantSummaries.length > 0 || itemSummaries.length > 0;
 
-  // Share the result as text (LINE, Telegram, ...). Browsers without the
-  // Web Share API fall back to copying the text to the clipboard.
-  const handleShare = async () => {
-    const message = buildShareSummary({
-      t,
-      sessionName,
-      currency,
-      grandTotal: effectiveGrandTotal,
-      lines: participantSummaries.map(({ username, amount }) => ({ username, amount })),
-    });
+  // Text that is shared: session name, total and each person's amount
+  const shareMessage = useMemo(
+    () =>
+      buildShareSummary({
+        t,
+        sessionName,
+        currency,
+        grandTotal: effectiveGrandTotal,
+        lines: participantSummaries.map(({ username, amount }) => ({ username, amount })),
+      }),
+    [t, sessionName, currency, effectiveGrandTotal, participantSummaries]
+  );
 
-    const canUseShareSheet =
-      Platform.OS !== 'web' ||
-      (typeof navigator !== 'undefined' && typeof navigator.share === 'function');
+  // The system share sheet exists on phones, and on browsers with Web Share API
+  const canUseShareSheet =
+    Platform.OS !== 'web' ||
+    (typeof navigator !== 'undefined' && typeof navigator.share === 'function');
 
-    if (canUseShareSheet) {
-      try {
-        await Share.share({ message, title: t('sessions.finish.title') });
-        return;
-      } catch (error) {
-        // The user closed the share sheet: nothing else to do.
-        if (error instanceof Error && error.name === 'AbortError') return;
-      }
+  const shareToLine = () => {
+    void Linking.openURL(`https://line.me/R/share?text=${encodeURIComponent(shareMessage)}`);
+  };
+
+  const copyMessage = async () => {
+    const ok = await copyText(shareMessage);
+    setCopyState(ok ? 'copied' : 'failed');
+    setTimeout(() => setCopyState('idle'), 2000);
+  };
+
+  const shareWithOtherApps = async () => {
+    try {
+      await Share.share({ message: shareMessage, title: t('sessions.finish.title') });
+    } catch {
+      // The user closed the share sheet: nothing to do
     }
-
-    await Clipboard.setStringAsync(message);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
   const grandTotalParts = showGrandTotal ? getCurrencyParts(effectiveGrandTotal, currency) : null;
 
@@ -662,13 +669,13 @@ export default function FinishScreen() {
             bg="$background"
             ai="center"
             jc="center"
-            onPress={handleShare}
+            onPress={() => setShareOpen(true)}
             pressStyle={{ opacity: 0.8 }}
           >
             <XStack ai="center" gap="$2">
               <Share2 size={18} color="#2ECC71" />
               <Text fontSize={16} fontWeight="600" color="#2ECC71">
-                {copied ? t('sessions.finish.copied') : t('sessions.finish.share')}
+                {t('sessions.finish.share')}
               </Text>
             </XStack>
           </Button>
@@ -688,6 +695,114 @@ export default function FinishScreen() {
           </Text>
         </Button>
       </YStack>
+
+      {/* Share preview: shows exactly what will be sent */}
+      <Modal
+        visible={shareOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShareOpen(false)}
+      >
+        <YStack f={1} bg="rgba(0,0,0,0.45)" jc="flex-end">
+          <YStack
+            bg="$background"
+            p="$4"
+            gap="$3"
+            borderTopLeftRadius={20}
+            borderTopRightRadius={20}
+            pb={(insets?.bottom ?? 0) + 16}
+            w="100%"
+            maw={560}
+            als="center"
+          >
+            <XStack ai="center" jc="space-between">
+              <Text fontSize={16} fontWeight="700">
+                {t('sessions.finish.sharePreview')}
+              </Text>
+              <Button unstyled p="$2" onPress={() => setShareOpen(false)}>
+                <X size={20} color="$gray10" />
+              </Button>
+            </XStack>
+
+            <YStack p="$3" borderRadius={12} bg="$gray2" borderWidth={1} borderColor="$gray5">
+              <Text selectable fontSize={14} lineHeight={22} color="$gray12">
+                {shareMessage}
+              </Text>
+            </YStack>
+
+            <Button
+              unstyled
+              height={44}
+              borderRadius={10}
+              bg="#06C755"
+              ai="center"
+              jc="center"
+              onPress={shareToLine}
+              pressStyle={{ opacity: 0.85 }}
+              hoverStyle={{ opacity: 0.9 }}
+            >
+              <XStack ai="center" gap="$2">
+                <MessageCircle size={18} color="white" />
+                <Text fontSize={15} fontWeight="700" color="white">
+                  {t('sessions.finish.sendLine')}
+                </Text>
+              </XStack>
+            </Button>
+
+            <Button
+              unstyled
+              height={44}
+              borderRadius={10}
+              borderWidth={1}
+              borderColor={copyState === 'failed' ? '#E74C3C' : '#2ECC71'}
+              bg="$background"
+              ai="center"
+              jc="center"
+              onPress={copyMessage}
+              pressStyle={{ opacity: 0.8 }}
+            >
+              <XStack ai="center" gap="$2">
+                {copyState === 'copied' ? (
+                  <Check size={18} color="#2ECC71" />
+                ) : (
+                  <Copy size={18} color={copyState === 'failed' ? '#E74C3C' : '#2ECC71'} />
+                )}
+                <Text
+                  fontSize={15}
+                  fontWeight="600"
+                  color={copyState === 'failed' ? '#E74C3C' : '#2ECC71'}
+                >
+                  {copyState === 'copied'
+                    ? t('sessions.finish.copied')
+                    : copyState === 'failed'
+                      ? t('sessions.finish.copyFailed')
+                      : t('sessions.finish.copy')}
+                </Text>
+              </XStack>
+            </Button>
+
+            {canUseShareSheet && (
+              <Button
+                unstyled
+                height={44}
+                borderRadius={10}
+                bg="$gray3"
+                ai="center"
+                jc="center"
+                onPress={shareWithOtherApps}
+                pressStyle={{ opacity: 0.8 }}
+              >
+                <XStack ai="center" gap="$2">
+                  <Share2 size={18} color="$gray11" />
+                  <Text fontSize={15} fontWeight="600" color="$gray11">
+                    {t('sessions.finish.otherApps')}
+                  </Text>
+                </XStack>
+              </Button>
+            )}
+          </YStack>
+        </YStack>
+      </Modal>
     </YStack>
   );
 }
