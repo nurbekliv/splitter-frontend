@@ -249,7 +249,8 @@
       "cancel": "Bekor qilish",
       "save": "Saqlash",
       "savingSplit": "Saqlanmoqda...",
-      "billConfirmed": "Hisob tasdiqlandi"
+      "billConfirmed": "Hisob tasdiqlandi",
+      "splitAllEqually": "Hammasini teng bo'lish"
     }
   }
 }

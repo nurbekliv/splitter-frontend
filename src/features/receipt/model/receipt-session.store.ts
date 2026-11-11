@@ -135,7 +135,8 @@ export const useReceiptSessionStore = create<ReceiptSessionStore>((set, get) => 
         quantity: item.quantity,
         totalPrice: item.totalPrice,
         kind: item.kind,
-        splitMode: item.quantity > 1 ? 'count' : 'equal',
+        // weighed items (e.g. 1.155 kg) cannot be split by whole units
+        splitMode: Number.isInteger(item.quantity) && item.quantity > 1 ? 'count' : 'equal',
         assignedTo: [],
         perPersonCount: {},
       }));

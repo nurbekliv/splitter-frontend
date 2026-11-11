@@ -89,6 +89,10 @@ const cloneItems = (source: Item[]): Item[] =>
     perPersonCount: item.perPersonCount ? { ...item.perPersonCount } : {},
   }));
 
+// Whole units (2x) can be split by units; weighed items (1.155 kg) are split equally.
+const defaultMode = (quantity?: number): Exclude<SplitMode, undefined> =>
+  quantity !== undefined && Number.isInteger(quantity) && quantity > 1 ? 'count' : 'equal';
+
 const ensureMode = (item: Item): Exclude<SplitMode, undefined> =>
   item.splitMode === 'count' ? 'count' : 'equal';
 
@@ -100,7 +104,7 @@ const toLocalItems = (source: ReceiptSplitItem[]): Item[] =>
     quantity: item.quantity,
     assignedTo: [...item.assignedTo],
     perPersonCount: item.perPersonCount ? { ...item.perPersonCount } : {},
-    splitMode: item.splitMode ?? (item.quantity > 1 ? 'count' : 'equal'),
+    splitMode: item.splitMode ?? defaultMode(item.quantity),
     kind: item.kind,
     totalPrice: item.totalPrice,
   }));
@@ -399,12 +403,12 @@ export default function ItemsSplitScreen() {
     : 0;
   const editingPriceParts = getCurrencyParts(editingTotal);
   const effectiveMode =
-    editing?.splitMode || (editingItem?.quantity && editingItem.quantity > 1 ? 'count' : 'equal');
+    editing?.splitMode || defaultMode(editingItem?.quantity);
   const isEqualMode = effectiveMode === 'equal';
   const isCountMode = effectiveMode === 'count';
 
   function openAssignModal(it: Item) {
-    const initialMode: SplitMode = it.splitMode ?? (it.quantity > 1 ? 'count' : 'equal');
+    const initialMode: SplitMode = it.splitMode ?? defaultMode(it.quantity);
     const assigned = initialMode === 'equal' ? [...(it.assignedTo || [])] : [];
     const perCount = initialMode === 'count' ? { ...(it.perPersonCount || {}) } : {};
 
@@ -414,6 +418,15 @@ export default function ItemsSplitScreen() {
       assignedTo: assigned,
       perPersonCount: perCount,
     });
+  }
+
+  // 割り勘: every item is shared equally by all participants, in one tap
+  function splitAllEqually() {
+    const everyone = participants.map((p) => p.uniqueId);
+    if (everyone.length === 0) return;
+    commitItems((prev) =>
+      prev.map((it) => ({ ...it, splitMode: 'equal', assignedTo: [...everyone], perPersonCount: {} }))
+    );
   }
 
   function closeAssignModal() {
@@ -561,7 +574,7 @@ export default function ItemsSplitScreen() {
   async function modalSave() {
   if (!editing) return;
   const mode: Exclude<SplitMode, undefined> =
-    editing.splitMode ?? ((editingItem?.quantity && editingItem.quantity > 1) ? 'count' : 'equal');
+    editing.splitMode ?? defaultMode(editingItem?.quantity);
 
   setSaving(true);
   try {
@@ -799,11 +812,26 @@ export default function ItemsSplitScreen() {
         <YStack px="$4" gap="$3">
           {/* Participants */}
           <YStack>
-            <XStack w="100%" ai="center" jc="flex-start" mb="$2">
+            <XStack w="100%" ai="center" jc="space-between" mb="$2">
               <XStack ai="center" gap="$2">
                 <UsersIcon size={18} color="$gray10" />
                 <Text fontWeight="700">{t('flow.split.participants', { count: participants.length })}</Text>
               </XStack>
+              <Button
+                unstyled
+                px={14}
+                py={8}
+                borderRadius={8}
+                bg="#2ECC71"
+                hoverStyle={{ bg: '#29B765' }}
+                pressStyle={{ bg: '#23A058' }}
+                onPress={splitAllEqually}
+                disabled={participants.length === 0 || finalizing}
+              >
+                <Text color="white" fontWeight="700" fontSize={13}>
+                  {t('flow.split.splitAllEqually')}
+                </Text>
+              </Button>
             </XStack>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <XStack gap="$2" pr="$4">

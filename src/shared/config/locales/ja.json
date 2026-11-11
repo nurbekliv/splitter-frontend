@@ -260,7 +260,8 @@
       "cancel": "キャンセル",
       "save": "保存",
       "savingSplit": "保存しています...",
-      "billConfirmed": "精算が確定しました"
+      "billConfirmed": "精算が確定しました",
+      "splitAllEqually": "全部均等に分ける"
     }
   }
 }

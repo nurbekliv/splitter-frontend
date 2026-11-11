@@ -260,7 +260,8 @@
       "cancel": "Cancel",
       "save": "Save",
       "savingSplit": "Saving split...",
-      "billConfirmed": "Bill confirmed"
+      "billConfirmed": "Bill confirmed",
+      "splitAllEqually": "Split everything equally"
     }
   }
 }
