@@ -1,7 +1,27 @@
 import axios, { AxiosError } from 'axios';
 import { getToken } from '@/shared/lib/utils/token-storage';
 import { emitUnauthorized } from '@/shared/api/auth-events';
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+const CONFIGURED_API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+
+// Web opened from another device (e.g. a phone at http://192.168.x.x:8090):
+// "localhost" would point at the phone itself, so use the host the page came from.
+const resolveApiUrl = (configured: string): string => {
+  if (typeof window === 'undefined' || !window.location?.hostname) return configured;
+  const pageHost = window.location.hostname;
+  if (pageHost === 'localhost' || pageHost === '127.0.0.1') return configured;
+  try {
+    const url = new URL(configured);
+    if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+      url.hostname = pageHost;
+      return url.toString().replace(/\/$/, '');
+    }
+  } catch {
+    // not a valid URL: keep it as it is
+  }
+  return configured;
+};
+
+const API_URL = resolveApiUrl(CONFIGURED_API_URL);
 
 export const apiClient = axios.create({
   baseURL: API_URL,

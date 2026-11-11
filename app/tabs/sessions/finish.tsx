@@ -3,7 +3,7 @@ import { Linking, Modal, Platform, Share } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { YStack, XStack, Text, Button, Circle, ScrollView } from 'tamagui';
-import { Check, Copy, FileText, MessageCircle, Share2, X } from '@tamagui/lucide-icons';
+import { Check, Copy, FileText, MessageCircle, Send, Share2, X } from '@tamagui/lucide-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { FinalizeTotalsByItem, FinalizeTotalsByParticipant, ReceiptAllocation } from '@/features/receipt/api/receipt.api';
 import { useReceiptSessionStore, type FinishPayload } from '@/features/receipt/model/receipt-session.store';
@@ -437,6 +437,10 @@ export default function FinishScreen() {
     Platform.OS !== 'web' ||
     (typeof navigator !== 'undefined' && typeof navigator.share === 'function');
 
+  const shareToTelegram = () => {
+    void Linking.openURL(`https://t.me/share/url?url=${encodeURIComponent(shareMessage)}`);
+  };
+
   const shareToLine = () => {
     void Linking.openURL(`https://line.me/R/share?text=${encodeURIComponent(shareMessage)}`);
   };
@@ -766,6 +770,25 @@ export default function FinishScreen() {
                 <MessageCircle size={18} color="white" />
                 <Text fontSize={15} fontWeight="700" color="white">
                   {t('sessions.finish.sendLine')}
+                </Text>
+              </XStack>
+            </Button>
+
+            <Button
+              unstyled
+              height={44}
+              borderRadius={10}
+              bg="#229ED9"
+              ai="center"
+              jc="center"
+              onPress={shareToTelegram}
+              pressStyle={{ opacity: 0.85 }}
+              hoverStyle={{ opacity: 0.9 }}
+            >
+              <XStack ai="center" gap="$2">
+                <Send size={18} color="white" />
+                <Text fontSize={15} fontWeight="700" color="white">
+                  {t('sessions.finish.sendTelegram')}
                 </Text>
               </XStack>
             </Button>

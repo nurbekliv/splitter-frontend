@@ -224,7 +224,8 @@
       "pdfName": "Name",
       "pdfAmount": "Amount",
       "pdfItem": "Item",
-      "pdfBreakdown": "Breakdown"
+      "pdfBreakdown": "Breakdown",
+      "sendTelegram": "Send via Telegram"
     }
   },
   "flow": {

@@ -213,7 +213,8 @@
       "pdfName": "Ism",
       "pdfAmount": "Summa",
       "pdfItem": "Mahsulot",
-      "pdfBreakdown": "Taqsimot"
+      "pdfBreakdown": "Taqsimot",
+      "sendTelegram": "Telegram orqali yuborish"
     }
   },
   "flow": {

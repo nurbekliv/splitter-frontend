@@ -224,7 +224,8 @@
       "pdfName": "名前",
       "pdfAmount": "金額",
       "pdfItem": "品目",
-      "pdfBreakdown": "内訳"
+      "pdfBreakdown": "内訳",
+      "sendTelegram": "Telegramで送る"
     }
   },
   "flow": {
