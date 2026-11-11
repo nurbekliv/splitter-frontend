@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { YStack, XStack, Text, View } from 'tamagui';
 import { Home, Settings, Bell, ChevronLeft } from '@tamagui/lucide-icons';
 import { useTranslation } from 'react-i18next';
+import HeaderLanguageSwitch from '@/shared/ui/HeaderLanguageSwitch';
 import { AppState } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -93,6 +94,7 @@ function GlobalTabsHeader(props: any) {
         </XStack>
 
         <XStack ai="center" gap="$3">
+          <HeaderLanguageSwitch />
           <Pressable onPress={() => router.push('/tabs/friends/requests')}>
             <View>
               <Bell size={22} color="$gray11" />
