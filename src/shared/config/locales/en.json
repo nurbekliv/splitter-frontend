@@ -218,7 +218,13 @@
       "sendLine": "Send via LINE",
       "copy": "Copy text",
       "copyFailed": "Could not copy — select the text above",
-      "otherApps": "Other apps"
+      "otherApps": "Other apps",
+      "savePdf": "Save as PDF",
+      "popupBlocked": "Pop-up was blocked — allow pop-ups for this site and try again",
+      "pdfName": "Name",
+      "pdfAmount": "Amount",
+      "pdfItem": "Item",
+      "pdfBreakdown": "Breakdown"
     }
   },
   "flow": {

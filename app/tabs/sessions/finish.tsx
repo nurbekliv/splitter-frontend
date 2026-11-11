@@ -3,12 +3,13 @@ import { Linking, Modal, Platform, Share } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { YStack, XStack, Text, Button, Circle, ScrollView } from 'tamagui';
-import { Check, Copy, MessageCircle, Share2, X } from '@tamagui/lucide-icons';
+import { Check, Copy, FileText, MessageCircle, Share2, X } from '@tamagui/lucide-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { FinalizeTotalsByItem, FinalizeTotalsByParticipant, ReceiptAllocation } from '@/features/receipt/api/receipt.api';
 import { useReceiptSessionStore, type FinishPayload } from '@/features/receipt/model/receipt-session.store';
 import { buildShareSummary } from '@/features/receipt/lib/share-summary';
 import { copyText } from '@/shared/lib/utils/copy-text';
+import { buildPrintHtml, printHtmlInBrowser } from '@/features/receipt/lib/print-summary';
 
 type Participant = { uniqueId: string; username: string };
 
@@ -41,9 +42,10 @@ export default function FinishScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const lastFinishPayload = useReceiptSessionStore((s) => s.lastFinishPayload);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [shareOpen, setShareOpen] = useState(false);
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const [pdfBlocked, setPdfBlocked] = useState(false);
 
   const payload = useMemo<FinishPayload | null>(() => {
     if (data) {
@@ -445,6 +447,25 @@ export default function FinishScreen() {
     setTimeout(() => setCopyState('idle'), 2000);
   };
 
+  // PDF (browser): open a printable page; the user picks "Save as PDF"
+  const saveAsPdf = () => {
+    const html = buildPrintHtml({
+      t,
+      language: i18n.language,
+      sessionName,
+      currency,
+      grandTotal: effectiveGrandTotal,
+      createdAt: payload?.createdAt,
+      people: participantSummaries.map(({ username, amount }) => ({ username, amount })),
+      items: itemSummaries.map(({ name, total, allocations }) => ({
+        name,
+        total,
+        allocations: allocations.map(({ username, amount }) => ({ username, amount })),
+      })),
+    });
+    setPdfBlocked(!printHtmlInBrowser(html));
+  };
+
   const shareWithOtherApps = async () => {
     try {
       await Share.share({ message: shareMessage, title: t('sessions.finish.title') });
@@ -780,6 +801,33 @@ export default function FinishScreen() {
                 </Text>
               </XStack>
             </Button>
+
+            {Platform.OS === 'web' && (
+              <Button
+                unstyled
+                height={44}
+                borderRadius={10}
+                borderWidth={1}
+                borderColor="$gray7"
+                bg="$background"
+                ai="center"
+                jc="center"
+                onPress={saveAsPdf}
+                pressStyle={{ opacity: 0.8 }}
+              >
+                <XStack ai="center" gap="$2">
+                  <FileText size={18} color="$gray11" />
+                  <Text fontSize={15} fontWeight="600" color="$gray11">
+                    {t('sessions.finish.savePdf')}
+                  </Text>
+                </XStack>
+              </Button>
+            )}
+            {pdfBlocked && (
+              <Text fontSize={13} color="#C0392B">
+                {t('sessions.finish.popupBlocked')}
+              </Text>
+            )}
 
             {canUseShareSheet && (
               <Button

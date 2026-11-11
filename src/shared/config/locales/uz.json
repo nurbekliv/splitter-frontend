@@ -207,7 +207,13 @@
       "sendLine": "LINE orqali yuborish",
       "copy": "Matnni nusxalash",
       "copyFailed": "Nusxalab bo'lmadi — yuqoridagi matnni belgilang",
-      "otherApps": "Boshqa ilovalar"
+      "otherApps": "Boshqa ilovalar",
+      "savePdf": "PDF qilib saqlash",
+      "popupBlocked": "Qalqib chiquvchi oyna bloklandi — ruxsat berib, qayta urinib ko'ring",
+      "pdfName": "Ism",
+      "pdfAmount": "Summa",
+      "pdfItem": "Mahsulot",
+      "pdfBreakdown": "Taqsimot"
     }
   },
   "flow": {

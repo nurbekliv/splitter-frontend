@@ -218,7 +218,13 @@
       "sendLine": "LINEで送る",
       "copy": "テキストをコピー",
       "copyFailed": "コピーできませんでした。上の文章を選択してください",
-      "otherApps": "ほかのアプリで共有"
+      "otherApps": "ほかのアプリで共有",
+      "savePdf": "PDFで保存",
+      "popupBlocked": "ポップアップがブロックされました。許可してもう一度お試しください",
+      "pdfName": "名前",
+      "pdfAmount": "金額",
+      "pdfItem": "品目",
+      "pdfBreakdown": "内訳"
     }
   },
   "flow": {
