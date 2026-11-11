@@ -156,6 +156,7 @@ export default function ScanReceiptScreen() {
         sessionName: preparedName,
         language,
         image: { data: SAMPLE_RECEIPT_IMAGE, mimeType: 'image/png' },
+        sample: true,
       });
       router.push('/tabs/sessions/participants');
     } catch (error) {

@@ -9,6 +9,8 @@ export interface ParseReceiptRequest {
   sessionName: string;
   language: string;
   image: ReceiptImagePayload;
+  /** Ask the API for the built-in sample receipt (no AI call). */
+  sample?: boolean;
 }
 
 export type ParsedReceiptItemKind = 'item' | 'fee' | 'discount' | string;
