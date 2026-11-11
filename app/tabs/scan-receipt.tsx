@@ -5,7 +5,8 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { YStack, XStack, Button, Paragraph, Input, Text, Spinner } from 'tamagui';
-import { ChevronLeft, AlertTriangle, Camera as CameraIcon } from '@tamagui/lucide-icons';
+import { ChevronLeft, AlertTriangle, Camera as CameraIcon, Image as ImageIcon } from '@tamagui/lucide-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 
 import {
@@ -141,6 +142,51 @@ export default function ScanReceiptScreen() {
       setLocalError(message);
     }
   }, [cameraRef, parsing, sessionName, setSessionNameStore, setCapture, parseReceipt, language, router]);
+
+  // Choose a receipt photo from the gallery (phone) or a file (browser).
+  // Same steps as the camera: resize, compress, send to the scan API.
+  const pickFromGallery = useCallback(async () => {
+    if (parsing) return;
+    setLocalError(null);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        quality: 1,
+      });
+      if (result.canceled || !result.assets?.[0]) return;
+
+      const asset = result.assets[0];
+      const targetWidth = asset.width ? Math.min(asset.width, 1280) : 1280;
+      const manipResult = await manipulateAsync(
+        asset.uri,
+        [{ resize: { width: targetWidth } }],
+        { compress: 0.6, format: SaveFormat.JPEG, base64: true }
+      );
+      if (!manipResult?.base64) {
+        throw new Error('Failed to prepare the receipt photo for upload.');
+      }
+
+      const preparedName = sessionName.trim() || getDefaultSessionName();
+      setSessionNameStore(preparedName);
+      setCapture({
+        uri: manipResult.uri,
+        base64: manipResult.base64,
+        mimeType: 'image/jpeg',
+        width: manipResult.width,
+        height: manipResult.height,
+      });
+
+      await parseReceipt({
+        sessionName: preparedName,
+        language,
+        image: { data: manipResult.base64, mimeType: 'image/jpeg' },
+      });
+      router.push('/tabs/sessions/participants');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to read the photo';
+      setLocalError(message);
+    }
+  }, [parsing, sessionName, setSessionNameStore, setCapture, parseReceipt, language, router]);
 
   // Sample receipt: send a tiny placeholder image through the normal scan API.
   // Without GEMINI_API_KEY the backend answers with sample items, so a real
@@ -279,6 +325,20 @@ export default function ScanReceiptScreen() {
               {parsing ? t('flow.scan.processing') : t('flow.scan.title')}
             </Button>
           </XStack>
+
+          <Button
+            size="$3"
+            borderRadius="$3"
+            backgroundColor="#2ECC71"
+            color="white"
+            hoverStyle={{ backgroundColor: '#29B765' }}
+            pressStyle={{ backgroundColor: '#23A058' }}
+            icon={<ImageIcon size={18} color="white" />}
+            onPress={pickFromGallery}
+            disabled={parsing}
+          >
+            {t('flow.scan.pickPhoto')}
+          </Button>
 
           <Button
             size="$3"

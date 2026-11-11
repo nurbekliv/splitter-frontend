@@ -232,7 +232,8 @@
       "language": "言語",
       "cancel": "キャンセル",
       "processing": "処理中...",
-      "sample": "サンプルのレシートで試す"
+      "sample": "サンプルのレシートで試す",
+      "pickPhoto": "写真を選ぶ"
     },
     "participants": {
       "search": "検索…",

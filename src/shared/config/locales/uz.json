@@ -221,7 +221,8 @@
       "language": "til",
       "cancel": "Bekor qilish",
       "processing": "Ishlanmoqda...",
-      "sample": "Namuna chek bilan sinash"
+      "sample": "Namuna chek bilan sinash",
+      "pickPhoto": "Rasm tanlash"
     },
     "participants": {
       "search": "Qidirish…",
