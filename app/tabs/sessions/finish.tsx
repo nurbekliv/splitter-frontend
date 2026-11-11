@@ -433,6 +433,12 @@ export default function FinishScreen() {
   );
 
   // The system share sheet exists on phones, and on browsers with Web Share API
+  // LINE's share link opens the LINE app only on phones; on a computer it
+  // just opens the LINE website, so the button is shown on phones only.
+  const isPhone =
+    Platform.OS !== 'web' ||
+    (typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+
   const canUseShareSheet =
     Platform.OS !== 'web' ||
     (typeof navigator !== 'undefined' && typeof navigator.share === 'function');
@@ -755,24 +761,26 @@ export default function FinishScreen() {
               </Text>
             </YStack>
 
-            <Button
-              unstyled
-              height={44}
-              borderRadius={10}
-              bg="#06C755"
-              ai="center"
-              jc="center"
-              onPress={shareToLine}
-              pressStyle={{ opacity: 0.85 }}
-              hoverStyle={{ opacity: 0.9 }}
-            >
-              <XStack ai="center" gap="$2">
-                <MessageCircle size={18} color="white" />
-                <Text fontSize={15} fontWeight="700" color="white">
-                  {t('sessions.finish.sendLine')}
-                </Text>
-              </XStack>
-            </Button>
+            {isPhone && (
+              <Button
+                unstyled
+                height={44}
+                borderRadius={10}
+                bg="#06C755"
+                ai="center"
+                jc="center"
+                onPress={shareToLine}
+                pressStyle={{ opacity: 0.85 }}
+                hoverStyle={{ opacity: 0.9 }}
+              >
+                <XStack ai="center" gap="$2">
+                  <MessageCircle size={18} color="white" />
+                  <Text fontSize={15} fontWeight="700" color="white">
+                    {t('sessions.finish.sendLine')}
+                  </Text>
+                </XStack>
+              </Button>
+            )}
 
             <Button
               unstyled
